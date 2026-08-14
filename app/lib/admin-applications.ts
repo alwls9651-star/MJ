@@ -9,7 +9,6 @@ export type AdminApplicationStatus = "applied" | "cancelled";
 export type AdminCourseState = "available" | "full" | "inactive";
 
 export interface AdminRosterEntry {
-  applicationId: string;
   grade: number;
   department: string;
   studentNumber: number;
@@ -114,7 +113,6 @@ export async function getAdminApplicationOverview(): Promise<AdminApplicationOve
     const student = studentsById.get(application.student_id);
     if (!student) return null;
     return {
-      applicationId: application.id,
       grade: student.grade,
       department: student.department,
       studentNumber: student.student_number,

@@ -111,7 +111,7 @@ export function AdminApplicationsView({ overview }: { overview: AdminApplication
           <Select label="신청 상태" value={status} onChange={(event) => setStatus(event.target.value as AdminApplicationStatus)}><option value="applied">현재 신청</option><option value="cancelled">취소 이력</option></Select>
         </div>
         <Table headers={["학년", "학과", "번호", "이름", "강좌", "신청 시각", status === "applied" ? "상태" : "취소 시각"]}>
-          {records.map(({ course, entry }) => <tr key={entry.applicationId}><td>{entry.grade}학년</td><td>{entry.department}</td><td>{entry.studentNumber}</td><td><b>{entry.name}</b></td><td>{course.subject}</td><td>{formatTime(entry.appliedAt)}</td><td>{status === "applied" ? <Badge tone="mint">신청 완료</Badge> : formatTime(entry.cancelledAt)}</td></tr>)}
+          {records.map(({ course, entry }) => <tr key={`${course.id}-${entry.grade}-${entry.department}-${entry.studentNumber}-${entry.appliedAt}`}><td>{entry.grade}학년</td><td>{entry.department}</td><td>{entry.studentNumber}</td><td><b>{entry.name}</b></td><td>{course.subject}</td><td>{formatTime(entry.appliedAt)}</td><td>{status === "applied" ? <Badge tone="mint">신청 완료</Badge> : formatTime(entry.cancelledAt)}</td></tr>)}
         </Table>
         {!records.length ? <p className="p-8 text-center text-sm text-slate-500">{status === "applied" ? "아직 신청한 학생이 없습니다." : "취소 이력이 없습니다."}</p> : null}
       </Card>
@@ -119,7 +119,7 @@ export function AdminApplicationsView({ overview }: { overview: AdminApplication
       <Modal open={Boolean(selectedCourse)} title={selectedCourse ? `${selectedCourse.subject} 신청자 명단` : "신청자 명단"}>
         <div className="mb-4 flex gap-2"><Button type="button" variant={rosterTab === "applied" ? "primary" : "secondary"} onClick={() => setRosterTab("applied")}>현재 신청자</Button><Button type="button" variant={rosterTab === "cancelled" ? "primary" : "secondary"} onClick={() => setRosterTab("cancelled")}>취소 이력</Button></div>
         <div className="max-h-[55vh] overflow-auto">
-          <table className="min-w-[620px]"><thead><tr><th>순번</th><th>학생</th><th>학과·번호</th><th>{rosterTab === "applied" ? "신청 시각" : "취소 시각"}</th><th>상태</th></tr></thead><tbody>{modalEntries.map((entry: AdminRosterEntry, index) => <tr key={entry.applicationId}><td>{index + 1}</td><td>{entry.grade}학년 {entry.name}</td><td>{entry.department} {entry.studentNumber}번</td><td>{formatTime(rosterTab === "applied" ? entry.appliedAt : entry.cancelledAt)}</td><td><Badge tone={rosterTab === "applied" ? "mint" : "gray"}>{rosterTab === "applied" ? "신청 완료" : "취소"}</Badge></td></tr>)}</tbody></table>
+          <table className="min-w-[620px]"><thead><tr><th>순번</th><th>학생</th><th>학과·번호</th><th>{rosterTab === "applied" ? "신청 시각" : "취소 시각"}</th><th>상태</th></tr></thead><tbody>{modalEntries.map((entry: AdminRosterEntry, index) => <tr key={`${entry.grade}-${entry.department}-${entry.studentNumber}-${entry.appliedAt}`}><td>{index + 1}</td><td>{entry.grade}학년 {entry.name}</td><td>{entry.department} {entry.studentNumber}번</td><td>{formatTime(rosterTab === "applied" ? entry.appliedAt : entry.cancelledAt)}</td><td><Badge tone={rosterTab === "applied" ? "mint" : "gray"}>{rosterTab === "applied" ? "신청 완료" : "취소"}</Badge></td></tr>)}</tbody></table>
           {!modalEntries.length ? <p className="py-8 text-center text-sm text-slate-500">{rosterTab === "applied" ? "아직 신청한 학생이 없습니다." : "취소 이력이 없습니다."}</p> : null}
         </div>
         <div className="mt-5 flex justify-end"><Button type="button" variant="secondary" onClick={() => setSelectedCourse(null)}>닫기</Button></div>

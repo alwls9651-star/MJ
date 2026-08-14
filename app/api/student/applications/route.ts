@@ -71,7 +71,7 @@ export async function POST(request: Request) {
         success: row.success,
         code,
         message: COURSE_APPLICATION_MESSAGES[code],
-        ...(row.success ? { applicationId: row.application_id, appliedAt: row.applied_at } : {}),
+        ...(row.success ? { appliedAt: row.applied_at } : {}),
       },
       { status: statusFor(code) },
     );
@@ -125,7 +125,7 @@ export async function DELETE() {
         success: row.success,
         code,
         message: COURSE_CANCELLATION_MESSAGES[code],
-        ...(row.success ? { applicationId: row.application_id, cancelledAt: row.cancelled_at } : {}),
+        ...(row.success ? { cancelledAt: row.cancelled_at } : {}),
       },
       { status: cancellationStatusFor(code) },
     );
