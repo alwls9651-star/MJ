@@ -1,0 +1,5 @@
+import test from"node:test";import assert from"node:assert/strict";import{parseCourseInput}from"../app/lib/course-validation.ts";const valid={sequence:1,subject:" 회계 기초 ",lectureStartDate:"2026-08-24",lectureEndDate:"2026-12-10",lectureDays:["목","화"],eligibility:"전학년",teacherId:"teacher-id",capacity:20,isActive:true};
+test("valid course is normalized",()=>{assert.deepEqual(parseCourseInput(valid),{academic_year:2026,sequence:1,subject:"회계 기초",lecture_start_date:"2026-08-24",lecture_end_date:"2026-12-10",lecture_days:"화, 목",eligibility:"전학년",teacher_id:"teacher-id",capacity:20,is_active:true})});
+test("capacity zero is rejected",()=>assert.equal(parseCourseInput({...valid,capacity:0}),null));
+test("end date before start date is rejected",()=>assert.equal(parseCourseInput({...valid,lectureEndDate:"2026-08-23"}),null));
+test("missing teacher and weekdays are rejected",()=>{assert.equal(parseCourseInput({...valid,teacherId:""}),null);assert.equal(parseCourseInput({...valid,lectureDays:[]}),null)});

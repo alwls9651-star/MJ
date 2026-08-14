@@ -1,0 +1,5 @@
+import Link from "next/link";
+import { AppShell, Badge, Card } from "./components/ui";
+import { StudentVerificationForm } from "./components/StudentVerificationForm";
+
+export default function Home(){return <AppShell role="student"><div className="mx-auto max-w-3xl"><div className="mb-8 text-center"><Badge tone="mint">학생 본인 확인</Badge><h1 className="mt-4 text-3xl font-black sm:text-4xl">방과후 수업, 지금 신청하세요</h1><p className="mt-3 text-slate-500">학생 정보를 입력하면 신청 가능한 강좌를 확인할 수 있어요.</p></div><Card className="p-6 sm:p-8"><StudentVerificationForm/></Card><div className="mt-6 grid gap-3 sm:grid-cols-2">{["1인 1과목만 신청 가능","신청 가능 시간에만 접수 가능","선착순 신청","정원 도달 시 자동 마감"].map((t,i)=><div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 text-sm text-slate-600" key={t}><span className="grid h-7 w-7 place-items-center rounded-full bg-blue-50 text-xs font-black text-blue-600">{i+1}</span>{t}</div>)}</div><p className="mt-7 text-center text-sm text-slate-500">교직원이신가요? <Link className="font-bold text-blue-600" href="/staff/login">교직원 로그인</Link></p></div></AppShell>}

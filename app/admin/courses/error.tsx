@@ -1,0 +1,1 @@
+"use client";import{Button}from"../../components/ui";export default function ErrorPage({reset}:{reset:()=>void}){return <div className="container py-20 text-center"><p className="font-bold text-rose-600">강좌 정보를 불러오지 못했습니다.</p><Button className="mt-4" onClick={reset}>다시 시도</Button></div>}
