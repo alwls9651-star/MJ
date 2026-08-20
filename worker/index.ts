@@ -1,9 +1,14 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { env as runtimeEnv } from "cloudflare:workers";
 
 interface Env {
   ASSETS: Fetcher;
+  NEXT_PUBLIC_SUPABASE_URL?: string;
+  NEXT_PUBLIC_SUPABASE_ANON_KEY?: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
+  STUDENT_SESSION_SECRET?: string;
   DB: D1Database;
   IMAGES: {
     input(stream: ReadableStream): {
@@ -27,6 +32,20 @@ interface ExecutionContext {
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // Sites supplies runtime variables as Worker bindings. Vinext's server
+    // helpers use Next.js-style process.env access, so bridge only the exact
+    // application keys here. Server secrets remain in the Worker bundle and
+    // are never added to the browser build.
+    for (const key of [
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "STUDENT_SESSION_SECRET",
+    ] as const) {
+      const value = env[key] ?? (runtimeEnv as Partial<Env>)[key];
+      if (value) process.env[key] = value;
+    }
+
     const url = new URL(request.url);
 
     if (url.pathname === "/_vinext/image") {
@@ -45,3 +64,4 @@ const worker = {
 };
 
 export default worker;
+
