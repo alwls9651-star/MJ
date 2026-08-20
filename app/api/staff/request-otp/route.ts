@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { getSupabaseServerClient } from "../../../lib/supabase-server";
-import { createSupabaseAuthServerClient } from "../../../lib/supabase-auth-server";
+import type { Database } from "../../../types/database";
 
 export async function POST(request: Request) {
   let stage = "input";
@@ -22,7 +23,17 @@ export async function POST(request: Request) {
     }
 
     stage = "otp";
-    const auth = await createSupabaseAuthServerClient();
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key) throw new Error("missing public Supabase config");
+
+    const auth = createClient<Database>(url, key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+    });
     const { error } = await auth.auth.signInWithOtp({
       email,
       options: { shouldCreateUser: true },
